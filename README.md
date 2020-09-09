@@ -2,7 +2,7 @@
 This android app can convert any website to an android app. <br>
 Just set the value of the string variable "url" to your desired website url in MainActivity.java. <br>
 
-# Development Tool: <br>
+# Development Environment: <br>
 Android Studio 4.0 <br>
 
 # Minimum System Requirement: <br>
