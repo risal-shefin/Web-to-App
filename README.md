@@ -9,4 +9,4 @@ Android Studio 4.0 <br>
 Android 4.1 <br>
 
 # Acknowledgement
-Android Webview is not appropriate for handling popups. So, I took help from this <a href="https://github.com/hwasiti/Android-popup-webview-handler">repository</a> & modify something to handle popups.
+Android Webview is not appropriate for handling popups. So, I took help from this <a href="https://github.com/hwasiti/Android-popup-webview-handler">repository</a> & modify something to handle popups in webview.
