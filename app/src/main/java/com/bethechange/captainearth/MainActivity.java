@@ -33,15 +33,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
-        webView.setWebViewClient(new WebViewClient());
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                // to continue loading a given URL in the current WebView.
+                // needed to handle redirects.
+                return false;
+            }
+        });
         webView.loadUrl(url);
 
         WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-
         // Set User Agent
-        userAgent = System.getProperty("http.agent");
-        webSettings.setUserAgentString(userAgent + "WebViewApp Captain Earth/1");
+        //userAgent = System.getProperty("http.agent");
+        // the upper line sometimes causes "403: disallowed user agent error"
+        userAgent = "";
+        webSettings.setUserAgentString(userAgent + "Your App Info/Version");
 
         // Enable Cookies
         CookieManager.getInstance().setAcceptCookie(true);
@@ -49,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             CookieManager.getInstance().setAcceptThirdPartyCookies(webView, true);
 
         // WebView Tweaks
+        webSettings.setJavaScriptEnabled(true);
         webSettings.setRenderPriority(WebSettings.RenderPriority.HIGH);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setAppCacheEnabled(true);
@@ -85,14 +93,39 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onCreateWindow(WebView view, boolean isDialog,
                                       boolean isUserGesture, Message resultMsg) {
+
             webViewPop = new WebView(contextPop);
+            webViewPop.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                    // to continue loading a given URL in the current WebView.
+                    // needed to handle redirects.
+                    return false;
+                }
+            });
+
+            // Enable Cookies
+            CookieManager cookieManager = CookieManager.getInstance();
+            cookieManager.setAcceptCookie(true);
+            if(android.os.Build.VERSION.SDK_INT >= 21) {
+                cookieManager.setAcceptThirdPartyCookies(webViewPop, true);
+                cookieManager.setAcceptThirdPartyCookies(webView, true);
+            }
+
+            WebSettings popSettings = webViewPop.getSettings();
+            // WebView tweaks for popups
             webViewPop.setVerticalScrollBarEnabled(false);
             webViewPop.setHorizontalScrollBarEnabled(false);
+            popSettings.setJavaScriptEnabled(true);
+            popSettings.setSaveFormData(true);
+            popSettings.setEnableSmoothTransition(true);
+            // Set User Agent
+            popSettings.setUserAgentString(userAgent + "Your App Info/Version");
+            // to support content re-layout for redirects
+            popSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+
+            // handle new popups
             webViewPop.setWebChromeClient(new CustomChromeClient());
-            webViewPop.getSettings().setJavaScriptEnabled(true);
-            webViewPop.getSettings().setSaveFormData(true);
-            webViewPop.getSettings().setEnableSmoothTransition(true);
-            webViewPop.getSettings().setUserAgentString(userAgent + "WebViewApp Captain Earth/1");
 
             // set the WebView as the AlertDialog.Builder’s view
             builder = new AlertDialog.Builder(MainActivity.this, AlertDialog.THEME_DEVICE_DEFAULT_LIGHT).create();
@@ -109,13 +142,6 @@ public class MainActivity extends AppCompatActivity {
 
             builder.show();
             builder.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-
-            CookieManager cookieManager = CookieManager.getInstance();
-            cookieManager.setAcceptCookie(true);
-            if(android.os.Build.VERSION.SDK_INT >= 21) {
-                cookieManager.setAcceptThirdPartyCookies(webViewPop, true);
-                cookieManager.setAcceptThirdPartyCookies(webView, true);
-            }
 
             WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
             transport.setWebView(webViewPop);
