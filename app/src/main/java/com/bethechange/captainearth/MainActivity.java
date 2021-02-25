@@ -16,6 +16,9 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     private Context contextPop;
@@ -41,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        // Set "X-Requested-With" null in the first request
+        //Map<String, String> extraHeaders = new HashMap<String, String>();
+        //extraHeaders.put("X-Requested-With", "");
+        //webView.loadUrl(url, extraHeaders);
         webView.loadUrl(url);
 
         WebSettings webSettings = webView.getSettings();
